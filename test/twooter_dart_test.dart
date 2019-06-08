@@ -3,14 +3,15 @@ import 'package:test/test.dart';
 
 void main() {
   group('A group of tests', () {
-    Awesome awesome;
+    TwooterClient client;
 
     setUp(() {
-      awesome = Awesome();
+      client = TwooterClient();
     });
 
-    test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
+    test('First Test', () async {
+      final value = await client.isUp();
+      expect(value, isTrue);
     });
   });
 }
