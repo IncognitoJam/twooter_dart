@@ -16,14 +16,14 @@ String _randomUsername({length = 10}) {
 }
 
 void main() {
-  group('A group of tests', () {
+  group('Twooter Client tests', () {
     TwooterClient client;
 
     setUp(() {
       client = TwooterClient();
     });
 
-    test('First Test', () async {
+    test('Twooter Online Status', () async {
       final value = await client.isUp();
 
       expect(value, isTrue);
