@@ -26,12 +26,14 @@ class Message {
 
   /// Construct a Message object from [json] data.
   static Message fromJSON(Map<String, dynamic> json) {
+    // Read properties from json data
     String id = json['id'];
     String name = json['name'];
     String message = json['message'];
     int published = json['published'];
     int expires = json['expires'];
 
+    // Construct new message object
     return Message(id, name, message, published, expires);
   }
 }

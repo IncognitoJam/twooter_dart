@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import 'message.dart';
+import 'http_response.dart';
 
 /// The unofficial Twooter client for Dart!
 ///
@@ -86,16 +87,4 @@ class TwooterClient {
     // TODO: encode JSON response?
     return HTTPResponse(response.statusCode, response.data);
   }
-}
-
-/// Wrapper for the basic response data we get from the Twooter API.
-///
-/// Contains a [statusCode] for the HTTP status code and the [body] of the
-/// response which may be null if the request failed.
-class HTTPResponse {
-  final int statusCode;
-  final dynamic body;
-
-  /// Create a new [HTTPResponse] object
-  HTTPResponse(this.statusCode, this.body);
 }
