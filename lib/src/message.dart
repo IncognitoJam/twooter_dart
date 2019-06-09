@@ -1,21 +1,21 @@
-// An immutable container class for a single Twoot
+/// An immutable container class for a single Twoot.
 class Message {
-  // This message unique ID
+  /// This message unique ID.
   final String id;
 
-  // Which user posted this message
+  /// Which user posted this message.
   final String name;
 
-  // The message contents itself
+  /// The message contents itself.
   final String message;
 
-  // When the message was published, as a UNIX timestamp in seconds
+  /// When the message was published, as a UNIX timestamp in seconds.
   final int published;
 
-  // The number of seconds until this message expires and is removed
+  /// The number of seconds until this message expires and is removed.
   final int expires;
 
-  // Creates a new Message, which is then immutable
+  /// Creates a new [Message] object.
   Message(this.id, this.name, this.message, this.published, this.expires);
 
   @override
@@ -24,8 +24,8 @@ class Message {
         '$published, expires: $expires}';
   }
 
-  // Construct a Message object from json data
-  static Message fromJSON(dynamic json) {
+  /// Construct a Message object from [json] data.
+  static Message fromJSON(Map<String, dynamic> json) {
     String id = json['id'];
     String name = json['name'];
     String message = json['message'];
