@@ -77,6 +77,19 @@ class TwooterClient {
     return messageList;
   }
 
+  /// Retrieves a list of message IDs for messages tagged with [tag].
+  Future<List<String>> getTagged(String tag) async {
+    final query = tag.replaceAll('#', '%23');
+    final response = await _query('/tagged/${query}');
+
+    // if response is empty, return an empty list
+    if (response.statusCode != 200 || response.body == null) {
+      return List();
+    }
+
+    return (response.body as String).split('\n');
+  }
+
   /// Make a POST request to the Twooter service.
   ///
   /// A request is made to the provided [path] with an optional [body], which

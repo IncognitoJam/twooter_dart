@@ -29,12 +29,22 @@ void main() {
       expect(value, isTrue);
     });
 
-    test('Retrieve messages', () async {
-      final messages = await client.getMessages();
+    group('Message tests', () {
+      test('Retrieve latest messages', () async {
+        final messages = await client.getMessages();
 
-      expect(messages, isNotNull);
-      expect(messages, isList);
-      expect(messages, isNotEmpty);
+        expect(messages, isNotNull);
+        expect(messages, isList);
+        expect(messages, isNotEmpty);
+      });
+
+      test('Retrieve tagged messages', () async {
+        final tag = '#twooter';
+        final messageIds = await client.getTagged(tag);
+
+        expect(messageIds, isNotNull);
+        expect(messageIds, isList);
+      });
     });
 
     group('Username tests', () {
