@@ -69,6 +69,22 @@ class TwooterClient {
     return response.statusCode == 200;
   }
 
+  /// Posts a message to the Twooter feed.
+  Future<String> postMessage(String token, String name, String message) async {
+    final response = await _query('/postMessage', body: {
+      'token': token,
+      'name': name,
+      'message': message,
+    });
+
+    // if no response, return null
+    if (response.statusCode != 200) {
+      return null;
+    }
+
+    return response.body;
+  }
+
   /// Retrieves a single message from Twooter, using the message [id].
   Future<Message> getMessage(String id) async {
     final response = await _query('/message/${id}');

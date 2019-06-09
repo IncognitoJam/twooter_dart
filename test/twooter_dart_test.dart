@@ -4,7 +4,8 @@ import 'dart:math';
 
 String _randomUsername({length = 10}) {
   final rng = Random();
-  final characters = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  final characters =
+      '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   // create 12 char string
   final charCodes = new List.generate(length, (index) {
@@ -76,6 +77,17 @@ void main() {
         final value = await client.refreshName(username, token);
 
         expect(value, isTrue);
+      });
+
+      test('Post message', () async {
+        final message = 'Write your own Twooter client in Dart! Use the '
+            'twooter-dart library on GitHub. '
+            'https://github.com/IncognitoJam/twooter_dart '
+            '#dartlang #twooter #dev #github';
+        final value = await client.postMessage(token, username, message);
+
+        expect(value, isNotNull);
+        expect(value.length, isNonZero);
       });
     });
   });
