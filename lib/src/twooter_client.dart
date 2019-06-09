@@ -59,6 +59,16 @@ class TwooterClient {
     return response.statusCode == 200;
   }
 
+  /// Refresh the token timeout for a particular username.
+  ///
+  /// Returns true if successful, or false if the token has expired for this
+  /// username already.
+  Future<bool> refreshName(String name, String token) async {
+    final response =
+        await _query('/refreshName', body: {'name': name, 'token': token});
+    return response.statusCode == 200;
+  }
+
   /// Retrieves a single message from Twooter, using the message [id].
   Future<Message> getMessage(String id) async {
     final response = await _query('/message/${id}');

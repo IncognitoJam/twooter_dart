@@ -58,15 +58,22 @@ void main() {
 
     group('Username tests', () {
       final username = 'flutter-app-' + _randomUsername(length: 5);
+      var token;
 
       test('Register username', () async {
-        final value = await client.registerName(username);
+        token = await client.registerName(username);
 
-        expect(value, isNotNull);
+        expect(token, isNotNull);
       });
 
       test('Check is active username', () async {
         final value = await client.isActiveName(username);
+
+        expect(value, isTrue);
+      });
+
+      test('Refresh username', () async {
+        final value = await client.refreshName(username, token);
 
         expect(value, isTrue);
       });
