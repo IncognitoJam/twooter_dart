@@ -25,13 +25,23 @@ void main() {
 
     test('First Test', () async {
       final value = await client.isUp();
+
       expect(value, isTrue);
     });
 
     test('Register Random Name', () async {
       final username = 'flutter-app-' + _randomUsername(length: 5);
       final value = await client.registerName(username);
+
       expect(value, isNotNull);
+    });
+
+    test('Retrieve Messages', () async {
+      final messages = await client.getMessages();
+
+      expect(messages, isNotNull);
+      expect(messages, isList);
+      expect(messages, isNotEmpty);
     });
   });
 }

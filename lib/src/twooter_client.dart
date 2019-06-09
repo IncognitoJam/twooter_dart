@@ -28,6 +28,22 @@ class TwooterClient {
     return response.body;
   }
 
+  // Retrieves a small number of messages from Twooter service (up to a maximum
+  // of 30) and returns them as a list of messages.
+  Future<List<Message>> getMessages() async {
+    var response = await _query('/messages');
+
+    if (response.statusCode != 200) {
+      // bad request, return empty list
+      return List();
+    }
+
+    List list = response.body as List;
+    List<Message> messageList = list.map((i) => Message.fromJSON(i),).toList();
+
+    return messageList;
+  }
+
   Future<HTTPResponse> _query(String path, {Map body}) async {
     var response;
 
