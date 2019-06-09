@@ -36,12 +36,17 @@ running `dartdoc` in the root of the repository.
 
 
 ## Features and bugs
+
+Features:
 - Check the Twooter service online status: `Future<bool> isUp()`
 - Register a username and retrieve it's token: `Future<String> registerName(name)`
 - Check whether or not a particular user has been registered: `Future<bool> isActiveName()`
 - Get the latest list of messages from Twooter: `Future<List<Message>> getMessages()`
 - Post a new message to Twooter: `Future<String> postMessage(token, name, message)`
 - and much more!
+
+Bugs:
+- Nothing known yet.
 
 
 ## Future improvements
