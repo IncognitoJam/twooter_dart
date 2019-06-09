@@ -50,7 +50,7 @@ class TwooterClient {
     }
 
     // Read response as a list of json objects (maps from strings to any types)
-    final list = response.body as List<Map<String, dynamic>>;
+    final list = response.body as List<dynamic>;
     // Convert each object from
     List<Message> messageList = list.map((i) => Message.fromJSON(i)).toList();
 
