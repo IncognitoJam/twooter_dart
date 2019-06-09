@@ -33,13 +33,27 @@ class TwooterClient {
     return response.statusCode == 200 && response.body == 'OK';
   }
 
-  /// Attempt to register a new username.
+  /// Attempt to register a new username, returning a token if successful.
+  ///
+  /// The token can be used to make further requests to the Twooter API with
+  /// this identity, for example to post messages. Null will be returned if
+  /// not successful, such as when an invalid name is provided or it has
+  /// already been registered.
+  ///
+  /// Use [isActiveName] to check whether or not a username is available.
   Future<String> registerName(String name) async {
     final response = await _query('/registerName', body: {'name': name});
     return response.body;
   }
 
   /// Contacts the Twooter service to check if a name exists and is active.
+  ///
+  /// ```dart
+  /// final username = 'Twooter-Internals';
+  /// final isActive = await client.isActiveName(username);
+  ///
+  /// print(isActive); // true
+  /// ```
   Future<bool> isActiveName(String name) async {
     final response = await _query('/isName', body: {'name': name});
     return response.statusCode == 200;
