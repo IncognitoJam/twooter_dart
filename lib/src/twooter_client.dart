@@ -59,6 +59,16 @@ class TwooterClient {
     return response.statusCode == 200;
   }
 
+  /// Retrieves a single message from Twooter, using the message [id].
+  Future<Message> getMessage(String id) async {
+    final response = await _query('/message/${id}');
+    if (response.statusCode != 200 || response.body == null) {
+      return null;
+    }
+
+    return Message.fromJSON(response.body);
+  }
+
   /// Retrieves a small number of messages from Twooter service (up to a maximum
   /// of 30) and returns them as a list of messages.
   Future<List<Message>> getMessages() async {

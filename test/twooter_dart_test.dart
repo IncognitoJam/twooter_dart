@@ -38,12 +38,21 @@ void main() {
         expect(messages, isNotEmpty);
       });
 
+      var messageIds = List<String>();
       test('Retrieve tagged messages', () async {
         final tag = '#twooter';
-        final messageIds = await client.getTagged(tag);
+        messageIds = await client.getTagged(tag);
 
         expect(messageIds, isNotNull);
         expect(messageIds, isList);
+      });
+
+      test('Retrieve message by id', () async {
+        final messageId = messageIds[0];
+        final message = await client.getMessage(messageId);
+
+        expect(message, isNotNull);
+        expect(message.id, equals(messageId));
       });
     });
 
