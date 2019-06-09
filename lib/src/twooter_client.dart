@@ -39,6 +39,12 @@ class TwooterClient {
     return response.body;
   }
 
+  /// Contacts the Twooter service to check if a name exists and is active.
+  Future<bool> isActiveName(String name) async {
+    final response = await _query('/isName', body: {'name': name});
+    return response.statusCode == 200;
+  }
+
   /// Retrieves a small number of messages from Twooter service (up to a maximum
   /// of 30) and returns them as a list of messages.
   Future<List<Message>> getMessages() async {

@@ -23,25 +23,34 @@ void main() {
       client = TwooterClient();
     });
 
-    test('Twooter Online Status', () async {
+    test('Check online status', () async {
       final value = await client.isUp();
 
       expect(value, isTrue);
     });
 
-    test('Register Random Name', () async {
-      final username = 'flutter-app-' + _randomUsername(length: 5);
-      final value = await client.registerName(username);
-
-      expect(value, isNotNull);
-    });
-
-    test('Retrieve Messages', () async {
+    test('Retrieve messages', () async {
       final messages = await client.getMessages();
 
       expect(messages, isNotNull);
       expect(messages, isList);
       expect(messages, isNotEmpty);
+    });
+
+    group('Username tests', () {
+      final username = 'flutter-app-' + _randomUsername(length: 5);
+
+      test('Register username', () async {
+        final value = await client.registerName(username);
+
+        expect(value, isNotNull);
+      });
+
+      test('Check is active username', () async {
+        final value = await client.isActiveName(username);
+
+        expect(value, isTrue);
+      });
     });
   });
 }
