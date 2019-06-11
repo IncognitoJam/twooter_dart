@@ -1,30 +1,80 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:twooter_dart/src/twooter_event.dart';
 
 import 'message.dart';
 import 'http_response.dart';
 
 /// The unofficial Twooter client for Dart!
-///
-/// TODO: add features to match official Java client
-/// TODO: write response class for each request
 class TwooterClient {
+  /** BEGIN CONSTANTS */
+
   /// The default Twooter API URL, pointing to John Vidler's server
   static const String _TWOOTER_API_URL = 'http://twooter.johnvidler.co.uk';
 
-  /// The URL this client will use when making Twooter requests
+  /// The default host for the Twooter live feed
+  static const String _TWOOTER_LIVE_FEED_HOST = 'twooter.johnvidler.co.uk';
+
+  /// The default port for the Twooter live feed
+  static const int _TWOOTER_LIVE_FEED_PORT = 1337;
+
+  /** END CONSTANTS */
+
+  /** BEGIN HTTP */
+
+  /// The URL this client will use when making Twooter requests.
+  ///
+  /// Defaults to [_TWOOTER_API_URL].
   final String apiUrl;
 
-  /// Use Dio to make HTTP requests to the Twooter API
+  /// Use Dio to make HTTP requests to the Twooter API.
   ///
-  /// TODO: look again at dart:http so that we don't need an external
-  ///   dependency
+  /// TODO: look again at dart:http so that we don't need an external dep
   Dio _dio;
 
-  /// Creates a new client instance
-  TwooterClient({this.apiUrl = _TWOOTER_API_URL}) {
+  /** END HTTP */
+
+  /** BEGIN WEB SOCKETS */
+
+  /// The host address to connect to for the live feed web socket.
+  ///
+  /// Defaults to [_TWOOTER_LIVE_FEED_HOST].
+  final String liveFeedHost;
+
+  /// The port to connect to for the live feed web socket.
+  ///
+  /// Defaults to [_TWOOTER_LIVE_FEED_PORT].
+  final int liveFeedPort;
+
+  /// The socket for the live feed.
+  Socket _liveFeedSocket;
+
+  /// The set of twooter event listeners which will be called when a new message
+  /// is received in the live feed.
+  ///
+  /// Register new listeners with [addEventListener].
+  Set<TwooterEventListener> _liveFeedListeners;
+
+  /** END WEB SOCKETS */
+
+  /// Creates a new client instance.
+  ///
+  /// This does not by default connect to the live feed. If you want this
+  /// functionality, you will need to write at least one [TwooterEventListener],
+  /// register it with [addEventListener] and then call [enableLiveFeed].
+  ///
+  /// Ignoring the live feed, this class makes no persistent connections and
+  /// each request will be serviced individually. This means that instances of
+  /// the TwooterClient can be created and no network requests will be performed
+  /// until one of the methods are called.
+  TwooterClient(
+      {this.apiUrl = _TWOOTER_API_URL,
+      this.liveFeedHost = _TWOOTER_LIVE_FEED_HOST,
+      this.liveFeedPort = _TWOOTER_LIVE_FEED_PORT}) {
     this._dio = Dio();
+    this._liveFeedListeners = Set();
   }
 
   /// Attempts to determine if the web service is both *online* and *reachable*.
@@ -126,6 +176,47 @@ class TwooterClient {
     return (response.body as String).split('\n');
   }
 
+  /// Enables (and connects to) the live feed service.
+  bool enableLiveFeed() {
+    if (this._liveFeedSocket != null) {
+      // Live feed is already active
+      return false;
+    }
+
+    // setup live feed
+    _connectLiveFeed();
+    return true;
+  }
+
+  /// Disables (and disconnects from) the live feed service.
+  bool disableLiveFeed() {
+    if (this._liveFeedSocket == null) {
+      // No live feed is connected
+      return false;
+    }
+
+    // close live feed
+    _disconnectLiveFeed();
+    return true;
+  }
+
+  /// Used to determine if the live feed is connected for this client.
+  bool isLiveFeedConnected() {
+    return this._liveFeedSocket != null;
+  }
+
+  /// Adds a function matching TwooterEventListener to the list of functions
+  /// to be called on new live feed events.
+  void addEventListener(TwooterEventListener eventListener) {
+    this._liveFeedListeners.add(eventListener);
+  }
+
+  /// Removes the supplied function from the event listener list, preventing any
+  /// further events from being sent to it.
+  void removeEventListener(TwooterEventListener eventListener) {
+    this._liveFeedListeners.remove(eventListener);
+  }
+
   /// Make a POST request to the Twooter service.
   ///
   /// A request is made to the provided [path] with an optional [body], which
@@ -155,5 +246,49 @@ class TwooterClient {
     // Return relevant data
     // TODO: encode JSON response?
     return HTTPResponse(response.statusCode, response.data);
+  }
+
+  /// Connect to the live feed web socket and begin listening for messages
+  void _connectLiveFeed() async {
+    // Connect the socket to the live feed
+    final address = await InternetAddress.lookup(liveFeedHost);
+    this._liveFeedSocket = await Socket.connect(address[0], liveFeedPort);
+    print("Aaaaaaaaaaaaaaaah");
+
+    // Set socket timeout
+    this._liveFeedSocket.timeout(Duration(seconds: 60));
+
+    // Listen for live feed messages
+    this._liveFeedSocket.listen((message) {
+      print('message: ${message}');
+
+      if (message == null) {
+        // ignore empty packet
+        return;
+      }
+
+      String packet = message as String;
+      final parts = packet.split(':');
+      if (parts.length != 3) {
+        // TODO: throw exception
+        return;
+      }
+
+      // Read packet data
+      String packetType = parts[0];
+      String payload = parts[2];
+      final twooterEvent = TwooterEvent.fromPacket(packetType, payload);
+      this._notifyListeners(twooterEvent);
+    });
+  }
+
+  /// Close the web socket channel
+  void _disconnectLiveFeed() {
+    this._liveFeedSocket.close();
+  }
+
+  /// Call every listener with the new event object
+  void _notifyListeners(TwooterEvent event) {
+    this._liveFeedListeners.forEach((listener) => listener(event));
   }
 }
