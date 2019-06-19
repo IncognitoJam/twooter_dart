@@ -30,6 +30,7 @@ class TwooterClient {
   /// Attempts to determine if the web service is both *online* and *reachable*.
   Future<bool> isUp() async {
     final response = await _query('/');
+    print('body: ${response.body}');
     return response.statusCode == 200 && response.body == 'OK';
   }
 
@@ -135,11 +136,11 @@ class TwooterClient {
 
     if (body == null) {
       // Make a basic post request when no data is provided
-      response = await _dio.post(_TWOOTER_API_URL + path);
+      response = await _dio.post(apiUrl + path);
     } else {
       // Make a post request with json encoded data
       response = await _dio.post(
-        _TWOOTER_API_URL + path,
+        apiUrl + path,
         data: jsonEncode(body),
         options: Options(
           /*

@@ -91,4 +91,13 @@ void main() {
       });
     });
   });
+
+  group('Twooter Server tests', () {
+    TwooterServer server;
+
+    setUp(() {
+      server = TwooterServer();
+      server.startServer();
+    });
+  });
 }
