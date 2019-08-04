@@ -81,7 +81,7 @@ void main() {
 
       test('Post message', () async {
         final message = 'Write your own Twooter client in Dart! Use the '
-            'twooter-dart library on GitHub. '
+            'twooter_dart library on GitHub. '
             'https://github.com/IncognitoJam/twooter_dart '
             '#dartlang #twooter #dev #github';
         final value = await client.postMessage(token, username, message);
