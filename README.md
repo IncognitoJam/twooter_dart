@@ -58,6 +58,6 @@ future, although it is not required.
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: https://github.com/IncognitoJam/twooter_dart
+[tracker]: https://github.com/IncognitoJam/twooter_dart/issues
 [tests]: https://github.com/IncognitoJam/twooter_dart/blob/master/test/twooter_dart_test.dart
 [twooter]: http://twooter.johnvidler.co.uk
